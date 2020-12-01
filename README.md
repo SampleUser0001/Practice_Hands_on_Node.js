@@ -21,6 +21,11 @@
       - [push,pop,unshift,shift](#pushpopunshiftshift)
       - [スプレッド構文による追加（配列）](#スプレッド構文による追加配列)
       - [レスト構文による削除（配列）](#レスト構文による削除配列)
+      - [sliceメソッド](#sliceメソッド)
+      - [sortメソッド](#sortメソッド)
+      - [for文](#for文)
+      - [for...of文](#forof文)
+      - [コールバック関数](#コールバック関数)
   - [参考](#参考)
 
 # 1章 イントロダクション
@@ -263,7 +268,97 @@ undefined
 
 #### レスト構文による削除（配列）
 
-P.22から再開する
+```javascript
+>  const arr2 = ['foo', 'bar', 'baz'] 
+undefined
+> arr2
+[ 'foo', 'bar', 'baz' ]
+> const[head1, head2, ...arr4] = arr2 
+undefined
+> arr4
+[ 'baz' ]
+> arr2
+[ 'foo', 'bar', 'baz' ]
+```
+
+#### sliceメソッド
+もとの変数に影響がない = イミュータブル
+```javascript
+> arr2
+[ 'foo', 'bar', 'baz' ]
+> arr2.slice(0,2)
+[ 'foo', 'bar' ]
+> arr2.slice(0,-1)
+[ 'foo', 'bar' ]
+> arr2.slice(1,-1)
+[ 'bar' ]
+> arr2.slice(2,-1)
+[]
+> arr2.slice(2,-1)
+[]
+> arr2.slice(0,-1)
+[ 'foo', 'bar' ]
+> arr2.slice(0,-2)
+[ 'foo' ]
+> arr2.slice(2)
+[ 'baz' ]
+> arr2.slice(1)
+[ 'bar', 'baz' ]
+> arr2.slice()
+[ 'foo', 'bar', 'baz' ]
+> arr2
+[ 'foo', 'bar', 'baz' ]
+```
+
+#### sortメソッド
+もとの変数に影響がある = ミュータブル
+
+```javascript
+> arr2
+[ 'foo', 'bar', 'baz' ]
+> arr2.sort
+[Function: sort]
+> arr2.sort()
+[ 'bar', 'baz', 'foo' ]
+> arr2
+[ 'bar', 'baz', 'foo' ]
+> arr3
+Uncaught ReferenceError: arr3 is not defined
+> const arr3 = ['a', ...arr2, 'b', 'c'] 
+undefined
+> arr3
+[ 'a', 'bar', 'baz', 'foo', 'b', 'c' ]
+> arr3.sort((a,b) => a.length - b.length)
+[ 'a', 'b', 'c', 'bar', 'baz', 'foo' ]
+> arr3
+[ 'a', 'b', 'c', 'bar', 'baz', 'foo' ]
+> 
+```
+
+#### for文
+
+```javascript
+> for (let i=0; i<arr2.length; i++) { console.log(arr2[i]) }
+bar
+baz
+foo
+undefined
+> 
+```
+
+#### for...of文
+
+```javascript
+> for (const e of arr2) { console.log(e) }
+bar
+baz
+foo
+undefined
+```
+
+#### コールバック関数
+
+p.23の真ん中辺りから再開。
 
 ## 参考
 
