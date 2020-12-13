@@ -26,7 +26,18 @@
       - [for文](#for文)
       - [for...of文](#forof文)
       - [コールバック関数](#コールバック関数)
-  - [参考](#参考)
+    - [クラス](#クラス)
+      - [クラス宣言](#クラス宣言)
+      - [コンストラクタ呼び出し](#コンストラクタ呼び出し)
+      - [継承](#継承)
+      - [継承クラスのコンストラクタ呼び出し](#継承クラスのコンストラクタ呼び出し)
+      - [オーバーライドメソッドの呼び出し](#オーバーライドメソッドの呼び出し)
+      - [プロトタイプチェーン](#プロトタイプチェーン)
+        - [継承関係がある場合](#継承関係がある場合)
+      - [Javaと異なる点](#javaと異なる点)
+    - [等価性](#等価性)
+  - [CommonJSとESモジュール](#commonjsとesモジュール)
+- [参考](#参考)
 
 # 1章 イントロダクション
 
@@ -358,8 +369,257 @@ undefined
 
 #### コールバック関数
 
-p.23の真ん中辺りから再開。
+```javascript
+> arr2.forEach(console.log)
+foo 0 [ 'foo', 'bar', 'baz' ]
+bar 1 [ 'foo', 'bar', 'baz' ]
+baz 2 [ 'foo', 'bar', 'baz' ]
+undefined
+```
+```javascript
+> arr2.map(e => e+e)
+[ 'foofoo', 'barbar', 'bazbaz' ]
+```
+```javascript
+> arr2.filter(e=>e.startsWith('b'))
+[ 'bar', 'baz' ]
+```
+```javascript
+> arr2.find(e => e.startsWith('b'))
+'bar'
+```
 
-## 参考
+```javascript
+> arr2.sort()
+[ 'bar', 'baz', 'foo' ]
+> arr2
+[ 'bar', 'baz', 'foo' ]
+> .editor
+// Entering editor mode (Ctrl+D to finish, Ctrl+C to cancel)
+arr2.find( e => {
+  console.log(e)
+  return e.endsWith('z')
+})
+
+bar
+baz
+'baz'
+```
+
+### クラス
+
+#### クラス宣言
+
+```javascript
+class Foo {
+    // private
+    #privateField = 1
+
+    // public
+    publicField = 2
+
+    // static private
+    static #staticPrivateField = 3
+
+    // static public
+    static staticPublicField = 4
+
+    // コンストラクタ
+    constructor(parameter) {
+        this.filedInitializedInConstructor = parameter
+        console.log('Foo constructor')
+    }
+
+    // private getter
+    get #computed(){
+        return this.publicField * 2
+    }
+
+    // public getter
+    get computed() {
+        return this.#computed
+    }
+
+    // private setter
+    set #computed(value){
+        this.publicField = value / 2
+    }
+
+    // public setter
+    set computed(value) {
+        this.#computed = value
+    }
+
+    // private Method
+    #privateMethod() {
+        return this.#privateField
+    }
+
+    // public Method
+    publicMethod() {
+        return this.#privateField
+    }
+
+    // static private Method
+    static #staticPrivateMethod() {
+        return this.#privateField
+    }
+
+    static staticPublicMethod() {
+        return this.#staticPrivateField
+    }
+}
+```
+
+#### コンストラクタ呼び出し
+
+```javascript
+> const fooInstance = new Foo(100)
+Foo constructor
+undefined
+```
+
+#### 継承
+
+```javascript
+class Bar extends Foo {
+    constructor(parameter) {
+        super(parameter)
+        this.subClassPublicField = 100
+        console.log('Bar constructor')
+    }
+
+    // override
+    publicMethod() {
+        return super.publicMethod() * this.subClassPublicField
+    }
+}
+```
+
+#### 継承クラスのコンストラクタ呼び出し
+
+```javascript
+> const barInstance = new Bar(100)
+Foo constructor
+Bar constructor
+undefined
+```
+
+#### オーバーライドメソッドの呼び出し
+
+```javascript
+// こっちはsuperクラス
+> fooInstance.publicMethod()
+1
+// こっちはsubクラス
+> barInstance.publicMethod()
+100
+```
+
+#### プロトタイプチェーン
+
+クラス宣言のうち、コンストラクタ、(public?)メソッド、getter,setterがprototypeに追加される。  
+インスタンス生成時にprototypeから、__proto__変数に代入される。
+
+```javascript
+> Foo.prototype
+{}
+> Object.getOwnPropertyNames(Foo.prototype)
+[ 'constructor', 'computed', 'publicMethod' ]
+> Foo.prototype.publicMethod
+[Function: publicMethod]
+> fooInstance.__proto__ === Foo.prototype
+true
+```
+
+instanceofはインスタンスの__proto__変数とクラスのprototype変数を比較する。  
+元のクラスから生成したものでなくても、__proto__自体を書き換えるとtrueと判定される。
+
+```javascript
+> fooInstance instanceof Foo
+true
+> const plainObject = {}
+undefined
+> plainObject.__proto__ = Foo.prototype
+{}
+> plainObject instanceof Foo
+true
+```
+
+##### 継承関係がある場合
+
+ここまではまあいい…
+```javascript
+> barInstance instanceof Foo
+true
+> barInstance.__proto__ === Bar.prototype
+true
+```
+
+subクラスでは2つしか定義していないので、「getOwnPropertyNames（所有者？）」ではこの2つしか出ない。
+```javascript
+> Object.getOwnPropertyNames(Bar.prototype)
+[ 'constructor', 'publicMethod' ]
+```
+
+__プロトタイプチェーンたる理由__
+```javascript
+> barInstance.__proto__ === Foo.prototype
+false
+> barInstance.__proto__.__proto__ === Foo.prototype
+true
+```
+
+すべての親はObjectクラス
+```javascript
+> fooInstance.__proto__.__proto__ === Object.prototype
+true
+> barInstance.__proto__.__proto__.__proto__ === Object.prototype
+true
+```
+
+#### Javaと異なる点
+
+1. staticメソッドはインスタンスから呼べない。
+2. subクラスでpublicメソッドを呼ぶとき、中にsuperクラスのprivateメソッドがあるとエラーになる。
+
+### 等価性
+
+「==」と「===」がある。
+
+0と空文字
+```javascript
+> 0 == ''
+true
+> 0 === ''
+false
+```
+
+別に生成したオブジェクトの比較はfalseになる。
+```javascript
+> { foo: 1 } === { foo: 1 }
+false
+> { foo: 1 } == { foo: 1 }
+false
+```
+
+オブジェクトを代入して生成した場合はtrueになる。
+```javascript
+> const obj5 = { foo: 1}
+undefined
+> const obj6 = obj5
+undefined
+> obj5 === obj6
+true
+```
+
+## CommonJSとESモジュール
+
+…というものがある。
+
+P.32から再開。
+
+
+# 参考
 
 - [O'Reilly Japan:ハンズオンNode.js](https://www.oreilly.co.jp/books/9784873119236/)
