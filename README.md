@@ -619,7 +619,8 @@ true
 
 P.32から再開。
 
-
+P.189あたりへ飛ぶ。
+終わったら2章に戻る。
 # 参考
 
 - [O'Reilly Japan:ハンズオンNode.js](https://www.oreilly.co.jp/books/9784873119236/)
