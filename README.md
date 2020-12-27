@@ -37,6 +37,10 @@
       - [Javaと異なる点](#javaと異なる点)
     - [等価性](#等価性)
   - [CommonJSとESモジュール](#commonjsとesモジュール)
+    - [JavaScriptの場合](#javascriptの場合)
+    - [jsonの場合](#jsonの場合)
+      - [__filenameと__dirname](#__filenameと__dirname)
+    - [strictモード](#strictモード)
 - [参考](#参考)
 
 # 1章 イントロダクション
@@ -615,12 +619,70 @@ true
 
 ## CommonJSとESモジュール
 
-…というものがある。
+### JavaScriptの場合
 
-P.32から再開。
+Functionのモジュール化ができる。
+```js:cjs-math.js
+$ cat cjs-math.js
+module.exports.add = (a, b) => a+b
+```
 
-P.189あたりへ飛ぶ。
-終わったら2章に戻る。
+```
+> const math = require('./cjs-math')
+undefined
+> math.add(1,2)
+3
+```
+
+よく見るやつ
+```js:cjs-math.js
+function add(a,b){
+    return a+b;
+}
+
+function subtract(a,b){
+    return a-b;
+}
+
+exports.add = add;
+exports.subtract = subtract;
+```
+
+### jsonの場合
+
+jsonもロードできる。
+
+```json:key-value.json
+{ "key": "value" }
+```
+
+```js
+> const key = require('./key-value')
+> key
+{ key: 'value' }
+```
+
+#### __filenameと__dirname
+
+cjs-filename-dirname.js
+```json
+module.exports = { __filename, __dirname }
+```
+
+```js
+> require('./cjs-filename-dirname')
+{
+  __filename: '/home/ittimfn/Practice_Hands_on_Node.js/01_javascript/cjs-filename-dirname.js',
+  __dirname: '/home/ittimfn/Practice_Hands_on_Node.js/01_javascript'
+}
+>
+```
+
+### strictモード
+
+ファイルの先頭に``use strict```と記載する。  
+JavaScriptにありがちなタイプミスによる変数の生成を抑制する。
+
 # 参考
 
 - [O'Reilly Japan:ハンズオンNode.js](https://www.oreilly.co.jp/books/9784873119236/)
