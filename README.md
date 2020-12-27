@@ -680,7 +680,7 @@ module.exports = { __filename, __dirname }
 
 ### strictモード
 
-ファイルの先頭に``use strict```と記載する。  
+ファイルの先頭に```use strict```と記載する。  
 JavaScriptにありがちなタイプミスによる変数の生成を抑制する。
 
 # 参考
