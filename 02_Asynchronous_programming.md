@@ -6,7 +6,7 @@
     - [コールバックを使った…同期処理](#コールバックを使った同期処理)
     - [fs.readdir()を使ってみる](#fsreaddirを使ってみる)
       - [存在しないディレクトリを指定した場合](#存在しないディレクトリを指定した場合)
-  - [コールバックの規約](#コールバックの規約)
+    - [コールバックの規約](#コールバックの規約)
   - [エラーハンドリング](#エラーハンドリング)
 
 ## イベントループについて
@@ -94,7 +94,7 @@ files [ 'arrayConvert.js', 'setTimeout.js', 'use_fs_readdir.js' ]
 
 #### 存在しないディレクトリを指定した場合
 
-```js:not_found_dir.js
+```javascript:not_found_dir.js
 const fs = require("fs");
 
 const returnValue = fs.readdir(
@@ -122,7 +122,7 @@ err [Error: ENOENT: no such file or directory, scandir 'hoge'] {
 files undefined
 ```
 
-## コールバックの規約
+### コールバックの規約
 
 - コールバックはパラメータの最後に書く
 - コールバックの引数は…
@@ -131,4 +131,104 @@ files undefined
   
 ## エラーハンドリング
 
-P.49から再開
+JavaScriptにはtry-catchがある。
+
+parseJsonSync.js
+```js: parseJsonSync.js
+function parseJsonSync(json,message) {
+    try{
+        console.log(message);
+        return JSON.parse(json);
+    } catch(err){
+        console.error('エラーキャッチ', err);
+    }
+}
+
+const okJson = '{ "value": "hoge" }';
+const ngJson = '{ "value": "hoge" ';
+console.log("parsed:",parseJsonSync(okJson));
+console.log("parsed:",parseJsonSync(ngJson));
+```
+
+実行結果
+```
+undefined
+parsed: { value: 'hoge' }
+undefined
+エラーキャッチ SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at parseJsonSync (/home/ittimfn/Practice_Hands_on_Node.js/02_Asynchronous_programming/parseJsonSync.js:4:21)
+    at Object.<anonymous> (/home/ittimfn/Practice_Hands_on_Node.js/02_Asynchronous_programming/parseJsonSync.js:13:23)
+    at Module._compile (node:internal/modules/cjs/loader:1108:14)
+    at Object.Module._extensions..js (node:internal/modules/cjs/loader:1137:10)
+    at Module.load (node:internal/modules/cjs/loader:973:32)
+    at Function.Module._load (node:internal/modules/cjs/loader:813:14)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:76:12)
+    at node:internal/main/run_main_module:17:47
+parsed: undefined
+```
+
+コールバックを使用する場合は、try-catchしない。  
+エラーハンドリングできないため。
+callbackTryCatch.js（NGパターン）
+```js:callbackTryCatch.js
+function parseJsonAsync(json, callback){
+    try {
+        setTimeout(() => {
+            callback(JSON.parse(json));
+        }, 1000)
+    } catch(err) {
+        console.error('エラーキャッチ', err);
+        // エラー発生時にcallbackが実行される。
+        callback({});
+    }
+}
+
+const ngJson = '{ "value": "hoge" ';
+parseJsonAsync(ngJson, result => {
+    console.log('parse結果:',result);
+});
+```
+
+実行結果
+```
+undefined:1
+{ "value": "hoge"
+
+SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/home/ittimfn/Practice_Hands_on_Node.js/02_Asynchronous_programming/callbackTryCatch.js:4:27)
+    at listOnTimeout (node:internal/timers:556:17)
+    at processTimers (node:internal/timers:499:7)
+```
+「エラーをキャッチ」が表示されていないため、catchを通過していないことがわかる。
+
+Node.jsの規約に合わせた修正版。
+callbackTryCatchModified.js
+```js:callbackTryCatchModified.js
+function parseJsonAsync(json, callback){
+    setTimeout(() => {
+        try {
+            callback(null, JSON.parse(json));
+        } catch(err) {
+            callback(err);
+        }
+    }, 1000);
+}
+
+const ngJson = '{ "value": "hoge" ';
+parseJsonAsync(ngJson, (err, result) => {
+    console.log('parse結果:', err, result);
+});
+```
+
+実行結果
+```
+parse結果: SyntaxError: Unexpected end of JSON input
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/home/ittimfn/Practice_Hands_on_Node.js/02_Asynchronous_programming/callbackTryCatchModified.js:4:33)
+    at listOnTimeout (node:internal/timers:556:17)
+    at processTimers (node:internal/timers:499:7) undefined
+```
+
+P.51から再開
