@@ -8,6 +8,10 @@
       - [存在しないディレクトリを指定した場合](#存在しないディレクトリを指定した場合)
     - [コールバックの規約](#コールバックの規約)
   - [エラーハンドリング](#エラーハンドリング)
+  - [同期/非同期](#同期非同期)
+    - [アンチパターン](#アンチパターン)
+    - [OKパターン](#okパターン)
+    - [OKパターン2](#okパターン2)
 
 ## イベントループについて
 
@@ -231,4 +235,171 @@ parse結果: SyntaxError: Unexpected end of JSON input
     at processTimers (node:internal/timers:499:7) undefined
 ```
 
-P.51から再開
+## 同期/非同期
+
+**同期と非同期を混ぜてはいけない。**
+
+### アンチパターン
+
+parseJSONAsyncWithCache_antiPattern.js（アンチパターン）
+```js
+function parseJSONAsync(json, callback){
+  setTimeout(() => {
+      try {
+          callback(null, JSON.parse(json));
+      } catch(err) {
+          callback(err);
+      }
+  }, 1000);
+}
+
+
+const cache = {}
+function parseJSONAsyncWithCache(json, callback) {
+  const cached = cache[json]
+  if (cached) {
+    callback(cached.err, cached.result)
+    return
+  }
+  parseJSONAsync(json, (err, result) => {
+    cache[json] = { err, result }
+    callback(err, result)
+  })
+}
+
+// 1回目の実行
+parseJSONAsyncWithCache(
+  '{"message": "Hello", "to": "World"}',
+  (err, result) => {
+    console.log('1回目の結果', err, result)
+    // コールバックの中で2回目を実行
+    parseJSONAsyncWithCache(
+      '{"message": "Hello", "to": "World"}',
+      (err, result) => {
+        console.log('2回目の結果', err, result)
+      }
+    )
+    console.log('2回目の呼び出し完了')
+  }
+)
+console.log('1回目の呼び出し完了')
+```
+```
+1回目の呼び出し完了
+1回目の結果 null { message: 'Hello', to: 'World' }
+2回目の結果 null { message: 'Hello', to: 'World' }
+2回目の呼び出し完了
+```
+
+### OKパターン
+
+常に非同期処理が実行されるようにする。
+
+```js
+function parseJSONAsync(json, callback){
+  setTimeout(() => {
+      try {
+          callback(null, JSON.parse(json));
+      } catch(err) {
+          callback(err);
+      }
+  }, 1000);
+}
+
+const cache = {}
+function parseJSONAsyncWithCache(json, callback) {
+  const cached = cache[json]
+  if (cached) {
+    // 常にcallbackを使う
+    setTimeout(() => callback(cached.err, cached.result),0)
+    return
+  }
+  parseJSONAsync(json, (err, result) => {
+    cache[json] = { err, result }
+    callback(err, result)
+  })
+}
+
+// 1回目の実行
+parseJSONAsyncWithCache(
+  '{"message": "Hello", "to": "World"}',
+  (err, result) => {
+    console.log('1回目の結果', err, result)
+    // コールバックの中で2回目を実行
+    parseJSONAsyncWithCache(
+      '{"message": "Hello", "to": "World"}',
+      (err, result) => {
+        console.log('2回目の結果', err, result)
+      }
+    )
+    console.log('2回目の呼び出し完了')
+  }
+)
+console.log('1回目の呼び出し完了')
+```
+
+```
+1回目の呼び出し完了
+1回目の結果 null { message: 'Hello', to: 'World' }
+2回目の呼び出し完了
+2回目の結果 null { message: 'Hello', to: 'World' }
+```
+
+### OKパターン2
+
+process.nextTick()を使う。  
+setTimeout()の場合、Node.jsのイベントループのフェーズに従い、複数のフェーズを順番に通過する必要があるが、  
+process.nextTick()の場合は、コールバックを処理するための特定のフェーズを持っていないため、現在実行中の処理が完了次第、すぐ実行される。ただし、Node.jsでしか実行できない。
+（表現が妥当か分からん…）
+
+```js
+function parseJSONAsync(json, callback){
+  setTimeout(() => {
+      try {
+          callback(null, JSON.parse(json));
+      } catch(err) {
+          callback(err);
+      }
+  }, 1000);
+}
+
+
+const cache = {}
+function parseJSONAsyncWithCache(json, callback) {
+  const cached = cache[json]
+  if (cached) {
+    // 常にcallbackを使う
+    process.nextTick(() => callback(cached.err, cached.result),0)
+    return
+  }
+  parseJSONAsync(json, (err, result) => {
+    cache[json] = { err, result }
+    callback(err, result)
+  })
+}
+
+// 1回目の実行
+parseJSONAsyncWithCache(
+  '{"message": "Hello", "to": "World"}',
+  (err, result) => {
+    console.log('1回目の結果', err, result)
+    // コールバックの中で2回目を実行
+    parseJSONAsyncWithCache(
+      '{"message": "Hello", "to": "World"}',
+      (err, result) => {
+        console.log('2回目の結果', err, result)
+      }
+    )
+    console.log('2回目の呼び出し完了')
+  }
+)
+console.log('1回目の呼び出し完了')
+```
+```
+1回目の呼び出し完了
+1回目の結果 null { message: 'Hello', to: 'World' }
+2回目の呼び出し完了
+2回目の結果 null { message: 'Hello', to: 'World' }
+```
+
+P.61から再開。
