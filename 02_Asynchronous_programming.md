@@ -12,6 +12,7 @@
     - [アンチパターン](#アンチパターン)
     - [OKパターン](#okパターン)
     - [OKパターン2](#okパターン2)
+    - [コールバックヘル（アンチパターン）](#コールバックヘルアンチパターン)
 
 ## イベントループについて
 
@@ -363,7 +364,6 @@ function parseJSONAsync(json, callback){
   }, 1000);
 }
 
-
 const cache = {}
 function parseJSONAsyncWithCache(json, callback) {
   const cached = cache[json]
@@ -402,4 +402,64 @@ console.log('1回目の呼び出し完了')
 2回目の結果 null { message: 'Hello', to: 'World' }
 ```
 
-P.61から再開。
+### コールバックヘル（アンチパターン）
+
+ネストを深くしてはいけない。
+
+NGパターン
+```js
+asyncFunc1(input, (err, result) => {
+  if (err) {
+    // エラーハンドリング
+  }
+  asyncFunc2(result, (err, result) => {
+    if (err) {
+      // エラーハンドリング
+    }
+    asyncFunc3(result, (err, result) => {
+      if (err) {
+        // エラーハンドリング
+      }
+      asyncFunc4(result, (err, result) => {
+        if (err) {
+          // エラーハンドリング
+        }
+ // ...
+      })
+    })
+  })
+})
+```
+
+別のファンクションに分ける。  
+OKパターン  
+```js
+function first(arg, callback) {
+  asyncFunc1(arg, (err, result) => {
+    if(err){
+      return callback(err);
+    }
+    second(result, callback);
+  })
+}
+
+function second(arg, callback) {
+  asyncFunc2(arg, (err, result) => {
+    if(err){
+      return callback(err);
+    }
+    third(result, callback);
+  })
+}
+
+// 中略
+
+first(input, (err, result) => {
+  if(err){
+    // エラーハンドリング
+  }
+})
+
+```
+
+P.60から再開
