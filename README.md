@@ -18,7 +18,7 @@
 
 ### コールバックのサンプル
 
-```js:parseJSONAsync.json
+```javascript : parseJSONAsync.json
 'use strict';
 
 function parseJSONAsync(json , callback){
