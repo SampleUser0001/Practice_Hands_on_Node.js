@@ -13,6 +13,14 @@
     - [OKパターン](#okパターン)
     - [OKパターン2](#okパターン2)
     - [コールバックヘル（アンチパターン）](#コールバックヘルアンチパターン)
+  - [Promiseインスタンスの生成と状態遷移](#promiseインスタンスの生成と状態遷移)
+    - [Promiseとは](#promiseとは)
+    - [Promiseのステータス](#promiseのステータス)
+    - [Promiseの実装例](#promiseの実装例)
+    - [then()](#then)
+    - [catch()](#catch)
+    - [finally()](#finally)
+  - [参考](#参考)
 
 ## イベントループについて
 
@@ -462,4 +470,106 @@ first(input, (err, result) => {
 
 ```
 
-P.60から再開
+## Promiseインスタンスの生成と状態遷移
+
+### Promiseとは
+
+非同期処理をいい感じに記載するための仕組み。何も考えずに書くとコールバックヘルになってしまうので、それを防ぐ。  
+
+### Promiseのステータス
+
+| ステータス | 説明                |
+| :------   | :--                |
+| pending   | 結果が未確定        |
+| fulfilled | 非同期処理に成功した |
+| rejected  | 非同期処理に失敗した | 
+| settled   | 非同期処理終了後の総称。（fulfilled or rejected） |
+
+### Promiseの実装例
+
+parseJSONAsyncPromise.js
+``` js : parseJSONAsyncPromise.js
+
+const ok_json = '{"Foo": 1}';
+console.log(JSON.parse(ok_json));
+
+function parseJsonAsync(json){
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            try {
+                resolve(JSON.parse(json));
+            } catch(err) {
+                reject(err);
+            }
+        }, 1000);
+    });
+}
+
+const toBeFulfilled = parseJsonAsync(ok_json);
+const toBeRejected = parseJsonAsync('NG');
+
+console.log('*************** Promise生成直後 ***************') ;
+console.log(toBeFulfilled) ;
+console.log(toBeRejected) ;
+setTimeout(() => { 
+  console.log('******************** 1秒後 ********************') ;
+  console.log(toBeFulfilled) ;
+  console.log(toBeRejected) ;
+}, 1000) 
+```
+
+実行結果  
+(※Node.js Ver.14.15.4)
+```
+{ Foo: 1 }
+*************** Promise生成直後 ***************
+Promise { <pending> }
+Promise { <pending> }
+(node:8) UnhandledPromiseRejectionWarning: SyntaxError: Unexpected token N in JSON at position 0
+    at JSON.parse (<anonymous>)
+    at Timeout._onTimeout (/app/parseJSONAsyncPromise.js:9:30)
+    at listOnTimeout (internal/timers.js:554:17)
+    at processTimers (internal/timers.js:497:7)
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8) UnhandledPromiseRejectionWarning: Unhandled promise rejection. This error originated either by throwing inside of an async function without a catch block, or by rejecting a promise which was not handled with .catch(). To terminate the node process on unhandled promise rejection, use the CLI flag `--unhandled-rejections=strict` (see https://nodejs.org/api/cli.html#cli_unhandled_rejections_mode). (rejection id: 1)
+(node:8) [DEP0018] DeprecationWarning: Unhandled promise rejections are deprecated. In the future, promise rejections that are not handled will terminate the Node.js process with a non-zero exit code.
+******************** 1秒後 ********************
+Promise { { Foo: 1 } }
+Promise {
+  <rejected> SyntaxError: Unexpected token N in JSON at position 0
+      at JSON.parse (<anonymous>)
+      at Timeout._onTimeout (/app/parseJSONAsyncPromise.js:9:30)
+      at listOnTimeout (internal/timers.js:554:17)
+      at processTimers (internal/timers.js:497:7)
+}
+```
+
+### then()
+Promiseインスタンスの状態がfulfilledまたはrejectedになったときに実行するコールバックを登録する。
+
+戻り値：変換したPromiseインスタンスを戻す。元のインスタンスは影響を受けない。
+
+```js
+promise.then(
+  value => {
+    // onFulfilled
+  },
+  err => {
+    // onRejected
+  }
+);
+```
+
+P.67から再開。
+
+### catch()
+
+### finally()
+
+
+
+
+
+## 参考
+
+- [とほほのPromise入門](http://www.tohoho-web.com/ex/promise.html)

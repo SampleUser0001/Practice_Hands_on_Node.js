@@ -1,0 +1,8 @@
+version: '3'
+services:
+  node:
+    build: .
+    container_name: nodepromise
+    volumes:
+      - ./start.sh:/start.sh
+      - ./app:/app
