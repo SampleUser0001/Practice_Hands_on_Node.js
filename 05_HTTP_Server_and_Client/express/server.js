@@ -7,7 +7,9 @@ const todos = [
 ];
 const app = express();
 
-app.get('/api/todos', (req, res) => {
+app.get('/api/todos/:id(\\d+)', (req, res) => {
+    const id = Number(req.params.id);
+    console.log("id:",id);
     res.json(todos);
 });
 app.listen(3000);

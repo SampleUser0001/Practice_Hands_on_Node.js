@@ -10,7 +10,8 @@ const todos = [
 
 router.route('/')
     .get((req, res) => {
-        res.json(todos);
+        const todoId = Number(req.params.id);
+        res.send(todos);
     })
     .post((req, res) => {
 
