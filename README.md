@@ -15,9 +15,9 @@
 | 02 | [2章 非同期プログラミング](02_Asynchronous_programming.md) | 中断 |
 | 03 | | 後でやる |
 | 04 | | 後でやる |
-| 05 | [5章 HTTPサーバとHTTPクライアント](./05_HTTP_Server_and_Client.md) | 後でやる |
+| 05 | [5章 HTTPサーバとHTTPクライアント](./05_HTTP_Server_and_Client.md) | 次 |
 | 06 | | 後でやる |
-| 07 |　[7章 データストレージ](./07_DataStrage.md) | 次 |
+| 07 | [7章 データストレージ](./07_DataStrage.md) | 後でやる |
 | 08 | | 後でやる |
 | 09 | | 後でやる |
 | 10 | | 後でやる |
