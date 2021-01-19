@@ -18,17 +18,18 @@ router.route('/api/todos/:id(\\d+)')
         for (let i=0; i<todos.length; i++) {
             if(todos[i].id == todoId){
                 console.log(todos[i]);
-                res.send(todos[i]);
+                res.status(200).send(todos[i]);
                 return ;
             }
         }
 
         // 本当は400を返す。
-        res.send(todoId + " is NotFound");
+        res.status(400).send(todoId + " is NotFound");
 
     })
     .post((req, res) => {
         console.log('POST');
+        res.status(200).send('nothing');
     })
 
 module.exports = router;
