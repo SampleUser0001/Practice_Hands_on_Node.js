@@ -87,4 +87,20 @@ Response {
 undefined
 ```
 
-P.192後半から再開
+### 引数を渡す
+
+```
+node --experimental-repl-await
+```
+
+```
+require('isomorphic-fetch')
+await fetch('http://localhost:3000/api/todos?completed=true')
+console.log(_.status, await _.json())
+```
+
+```
+200 [ { id: 2, title: '下書き', completed: true } ]
+```
+
+P.193後半から再開
