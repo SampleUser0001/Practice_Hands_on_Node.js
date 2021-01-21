@@ -1,5 +1,17 @@
 # 5章 HTTPサーバとHTTPクライアント
 
+- [5章 HTTPサーバとHTTPクライアント](#5章-httpサーバとhttpクライアント)
+  - [expressを使用する](#expressを使用する)
+  - [expressによるルーティング機能](#expressによるルーティング機能)
+    - [起動](#起動)
+    - [実行結果（200）](#実行結果200)
+    - [実行結果（400）](#実行結果400)
+  - [5.4 ExpressによるToDo管理アプリケーションの開発](#54-expressによるtodo管理アプリケーションの開発)
+    - [isomorphic-fetchをREPLで使う](#isomorphic-fetchをreplで使う)
+    - [GET:引数を渡す](#get引数を渡す)
+    - [POST:fetchでjsonを送信する](#postfetchでjsonを送信する)
+      - [curlでPOST](#curlでpost)
+
 ## expressを使用する
 
 事前にexpressをinstallする
@@ -87,7 +99,7 @@ Response {
 undefined
 ```
 
-### 引数を渡す
+### GET:引数を渡す
 
 ```
 node --experimental-repl-await
@@ -103,4 +115,39 @@ console.log(_.status, await _.json())
 200 [ { id: 2, title: '下書き', completed: true } ]
 ```
 
-P.193後半から再開
+### POST:fetchでjsonを送信する
+
+そのままだとアプリ側でPOSTが処理できないので、パッケージを入れる。  
+参考：[Espresso&Onigiri:Node.js の express で POST した値を取ろうとしたら request.body が undefined になる](https://va2577.github.io/post/99/)
+
+```
+npm install body-parser
+```
+
+```
+node --experimental-repl-await
+```
+
+```js
+require('isomorphic-fetch')
+.editor
+await fetch('http://localhost:3000/api/todos' ,{
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ title: 'ペン入れ' })
+})
+```
+
+bodyが取れねえ！
+
+```js
+console.log(_.status, await _.json())
+```
+
+#### curlでPOST
+
+```
+curl -X POST -H "Content-Type: application/json" -d "{title:'hogehoge'}" localhost:3000/api/todos
+```

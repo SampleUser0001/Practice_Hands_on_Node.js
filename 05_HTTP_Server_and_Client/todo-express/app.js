@@ -1,6 +1,8 @@
 'use strict'
 
 const express = require('express');
+const bodyParser = require('body-parser')
+
 
 let todos = [
     {id:1, title:'ネーム', completed:false},
@@ -18,4 +20,35 @@ app.get('/api/todos', (req, res) => {
     const completed =  req.query.completed === 'true'
     res.json(todos.filter(todo => todo.completed === completed))
 });
+
+let id = todos.length;
+
+// Todo登録
+app.use(bodyParser.urlencoded({ extended: true }));
+app.post('/api/todos', (req, res, next) =>{
+    res.setHeader('Content-Type', 'application/json');
+    console.log('POST');
+    console.log('req.body', req.body)
+
+    const { title } = req.body;
+    if(typeof title !== 'string' || !title ){
+        // titleがリクエストに含まれていない場合はステータスコード400
+        const err = new Error('title is required.');
+        err.statusCode = 400;
+        return next(err);
+    }
+
+    // Todoの作成
+    const todo = { id: id+=1 , title, completed:false };
+    todos.push(todo);
+    // 201(Created)
+    res.status(201).json(todo);
+});
+
+// エラー制御
+app.use((err, req, res, next) => {
+    console.error(err);
+    res.status(err.statusCode || 500).json({error: err.message});
+});
+
 app.listen(3000);
