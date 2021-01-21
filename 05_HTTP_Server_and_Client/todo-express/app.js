@@ -25,6 +25,7 @@ let id = todos.length;
 
 // Todo登録
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 app.post('/api/todos', (req, res, next) =>{
     res.setHeader('Content-Type', 'application/json');
     console.log('POST');

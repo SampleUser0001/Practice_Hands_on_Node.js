@@ -10,7 +10,6 @@
     - [isomorphic-fetchをREPLで使う](#isomorphic-fetchをreplで使う)
     - [GET:引数を渡す](#get引数を渡す)
     - [POST:fetchでjsonを送信する](#postfetchでjsonを送信する)
-      - [curlでPOST](#curlでpost)
 
 ## expressを使用する
 
@@ -118,11 +117,19 @@ console.log(_.status, await _.json())
 ### POST:fetchでjsonを送信する
 
 そのままだとアプリ側でPOSTが処理できないので、パッケージを入れる。  
-参考：[Espresso&Onigiri:Node.js の express で POST した値を取ろうとしたら request.body が undefined になる](https://va2577.github.io/post/99/)
+- [Espresso&Onigiri:Node.js の express で POST した値を取ろうとしたら request.body が undefined になる](https://va2577.github.io/post/99/)
+- [Express:v4:req.body](https://expressjs.com/en/4x/api.html#req.body)
 
 ```
 npm install body-parser
 ```
+
+jsonをPOSTで処理するためにはアプリでこの2行がいる。
+```js
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+```
+
 
 ```
 node --experimental-repl-await
@@ -140,14 +147,25 @@ await fetch('http://localhost:3000/api/todos' ,{
 })
 ```
 
-bodyが取れねえ！
-
 ```js
 console.log(_.status, await _.json())
 ```
-
-#### curlでPOST
-
+```json
+> console.log(_.status, await _.json())
+201 { id: 3, title: 'ペン入れ', completed: false }
+undefined
 ```
-curl -X POST -H "Content-Type: application/json" -d "{title:'hogehoge'}" localhost:3000/api/todos
+
+POSTした結果を見る。
+```js
+await fetch('http://localhost:3000/api/todos')
+console.log(_.status, await _.json())
+```
+```json
+200 [
+  { id: 1, title: 'ネーム', completed: false },
+  { id: 2, title: '下書き', completed: true },
+  { id: 3, title: 'ペン入れ', completed: false }
+]
+undefined
 ```
