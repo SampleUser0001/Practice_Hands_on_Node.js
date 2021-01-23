@@ -10,6 +10,7 @@
     - [isomorphic-fetchをREPLで使う](#isomorphic-fetchをreplで使う)
     - [GET:引数を渡す](#get引数を渡す)
     - [POST:fetchでjsonを送信する](#postfetchでjsonを送信する)
+  - [ReactとNode.jsを使用したユニバーサルWebアプリケーション](#reactとnodejsを使用したユニバーサルwebアプリケーション)
 
 ## expressを使用する
 
@@ -169,3 +170,13 @@ console.log(_.status, await _.json())
 ]
 undefined
 ```
+
+## ReactとNode.jsを使用したユニバーサルWebアプリケーション
+
+```
+npm install
+npm start
+```
+
+http://localhost:3000
+
