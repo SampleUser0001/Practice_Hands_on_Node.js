@@ -37,7 +37,7 @@ export default function Todos(props){
         });
 
         // エラーハンドリング
-        eventSource.addEventListener('error', e => console.log('SSEエラー', e));
+        eventSource.onerror = e => console.log('SSEエラー', e);
 
         return () => eventSource.close();
     }, [props.page])
