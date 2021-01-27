@@ -1,7 +1,7 @@
-'use strict'
+'use strict';
 
 const express = require('express');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
 
 
 let todos = [
@@ -17,8 +17,8 @@ app.get('/api/todos', (req, res) => {
 
     // GETのパラメータに'completed'がある場合
     // 'completed=true'が来ていればtrue。
-    const completed =  req.query.completed === 'true'
-    res.json(todos.filter(todo => todo.completed === completed))
+    const completed =  req.query.completed === 'true';
+    res.json(todos.filter(todo => todo.completed === completed));
 });
 
 // SSE送信関数の保持配列
@@ -63,7 +63,7 @@ app.use(express.json());
 app.post('/api/todos', (req, res, next) =>{
     res.setHeader('Content-Type', 'application/json');
     console.log('POST');
-    console.log('req.body', req.body)
+    console.log('req.body', req.body);
 
     const { title } = req.body;
     if(typeof title !== 'string' || !title ){
