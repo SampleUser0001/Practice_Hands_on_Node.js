@@ -6,7 +6,7 @@
   - [SSE(Server Sent Events)](#sseserver-sent-events)
     - [実装](#実装)
       - [ブラウザを開きながらREPLでTODOを追加](#ブラウザを開きながらreplでtodoを追加)
-      - [原因調査](#原因調査)
+        - [障害調査(差分確認)](#障害調査差分確認)
 
 ## ポーリング
 
@@ -68,10 +68,12 @@ Ctrl + D
 サーバに「ペン入れ」タスクが追加され、ブラウザが更新自動で更新される。  
 **正しく動いているっぽいのに、eventsがブラウザの開発ツールで出ないぞ？**
 
-#### 原因調査
-
-エラーが発生している。
+##### 障害調査(差分確認)
 
 ```
-GET http://localhost:3000/api/todos/events net::ERR_INCOMPLETE_CHUNKED_ENCODING 200 (OK)
+diff hands-on-nodejs/ch06/todo-sse/app.js Practice_Hands_on_Node.js/06_Realtime_Web_application/todo-sse/app.js
+diff hands-on-nodejs/ch06/todo-sse/components/Todos.js Practice_Hands_on_Node.js/06_Realtime_Web_application/todo-sse/components/Todos.js
+diff hands-on-nodejs/ch06/todo-sse/pages/active.js Practice_Hands_on_Node.js/06_Realtime_Web_application/todo-sse/pages/active.js
+diff hands-on-nodejs/ch06/todo-sse/pages/completed.js Practice_Hands_on_Node.js/06_Realtime_Web_application/todo-sse/pages/completed.js
+diff hands-on-nodejs/ch06/todo-sse/pages/index.js Practice_Hands_on_Node.js/06_Realtime_Web_application/todo-sse/pages/index.js
 ```
