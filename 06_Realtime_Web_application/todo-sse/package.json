@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "eventsource": "^1.0.7",
     "express": "^4.17.1",
     "isomorphic-fetch": "^3.0.0",
     "next": "^10.0.5",
