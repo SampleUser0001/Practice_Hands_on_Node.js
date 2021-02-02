@@ -7,6 +7,7 @@
     - [実装](#実装)
       - [ブラウザを開きながらREPLでTODOを追加](#ブラウザを開きながらreplでtodoを追加)
         - [障害調査(差分確認)](#障害調査差分確認)
+  - [WebSocket](#websocket)
 
 ## ポーリング
 
@@ -77,3 +78,21 @@ diff hands-on-nodejs/ch06/todo-sse/pages/active.js Practice_Hands_on_Node.js/06_
 diff hands-on-nodejs/ch06/todo-sse/pages/completed.js Practice_Hands_on_Node.js/06_Realtime_Web_application/todo-sse/pages/completed.js
 diff hands-on-nodejs/ch06/todo-sse/pages/index.js Practice_Hands_on_Node.js/06_Realtime_Web_application/todo-sse/pages/index.js
 ```
+
+## WebSocket
+
+Socket.IOを使って実装する。  
+細かいことは後で書く。
+
+```
+cd 06_Realtime_Web_application/todo-socket-io
+npm install
+npm start
+```
+
+[http://penguin.linux.test:3000/](http://penguin.linux.test:3000/)  
+[http://localhost:3000/](http://localhost:3000/)
+
+
+障害調査も後でやる。
+
