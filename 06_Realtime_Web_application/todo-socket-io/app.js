@@ -22,7 +22,7 @@ nextApp.prepare().then(
 
     // /todos名前空間で接続待機
     const ioTodos = io.of('/todos')
-    io.Todos.on('connection', socket => {
+    ioTodos.on('connection', socket => {
       console.log('connected')
       // 接続したクライアントにToDo一覧を送信
       socket.emit('todos', todos)

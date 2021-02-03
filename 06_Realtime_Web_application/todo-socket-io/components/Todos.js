@@ -12,8 +12,15 @@ const pages = {
   completed: { title: '完了したToDo', completed: true}
 }
 
+// CSRでページを切り替えるためのリンク
+const pageLinks = Object.keys(pages).map((page, index) =>
+  <Link href={`/${page === 'index' ? '' : page}`} key={index}>
+    <a style={{ marginRight: 10 }}>{pages[page].title}</a>
+  </Link>
+)
+
 export default function Todos(props) {
-  const { title: completed } = pages[props.pages]
+  const { title, completed } = pages[props.page]
   const [todos, setTodos] = useState([])
 
   // socketをstateとして保持
@@ -50,7 +57,7 @@ export default function Todos(props) {
           if (e.key !== 'Enter' || !title){
             return
           }
-          e.socket.value = ''
+          e.target.value = ''
           socket.emit('createTodo', title)
         }}/>
       </label>
