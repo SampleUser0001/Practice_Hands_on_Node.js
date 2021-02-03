@@ -16,7 +16,7 @@
 | 03 | | 後でやる |
 | 04 | | 後でやる |
 | 05 | [5章 HTTPサーバとHTTPクライアント](./05_HTTP_Server_and_Client.md) | 終了 |
-| 06 | [6章 リアルタイムWebアプリケーション](./06_Realtime_Web_application.md) | 次 |
+| 06 | [6章 リアルタイムWebアプリケーション](./06_Realtime_Web_application.md) | 終了 |
 | 07 | [7章 データストレージ](./07_DataStrage.md) | 後でやる |
 | 08 | 8章 ユニットテストとデバッグ | 後でやる |
 | 09 | 9章 デプロイ | 後でやる |

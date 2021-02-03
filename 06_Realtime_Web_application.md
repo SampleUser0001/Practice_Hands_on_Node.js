@@ -81,8 +81,8 @@ diff hands-on-nodejs/ch06/todo-sse/pages/index.js Practice_Hands_on_Node.js/06_R
 
 ## WebSocket
 
+リアルタイムWebアプリケーションの４つ目の手段。  
 Socket.IOを使って実装する。  
-細かいことは後で書く。
 
 ```
 cd 06_Realtime_Web_application/todo-socket-io
@@ -92,7 +92,3 @@ npm start
 
 [http://penguin.linux.test:3000/](http://penguin.linux.test:3000/)  
 [http://localhost:3000/](http://localhost:3000/)
-
-
-障害調査も後でやる。
-
