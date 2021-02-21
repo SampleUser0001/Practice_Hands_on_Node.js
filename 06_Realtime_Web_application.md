@@ -1,6 +1,7 @@
 # 6章 リアルタイムWebアプリケーション
 
 - [6章 リアルタイムWebアプリケーション](#6章-リアルタイムwebアプリケーション)
+  - [用語一覧](#用語一覧)
   - [ポーリング](#ポーリング)
   - [ロングポーリング](#ロングポーリング)
   - [SSE(Server Sent Events)](#sseserver-sent-events)
@@ -8,6 +9,16 @@
       - [ブラウザを開きながらREPLでTODOを追加](#ブラウザを開きながらreplでtodoを追加)
         - [障害調査(差分確認)](#障害調査差分確認)
   - [WebSocket](#websocket)
+
+## 用語一覧
+
+| 略語 | フル |
+| :-- | :-- |
+| SPA | シングルページアプリケーション |
+| CSR | Client Side Rendering |
+| SSR | Server Side Rendering |
+| SSG | Static Site Generation |
+| SSE | Server Sent Events |
 
 ## ポーリング
 
